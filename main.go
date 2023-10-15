@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"database/sql"
 	"errors"
 	"fmt"
@@ -131,7 +132,7 @@ func InitDb(url string) (*sql.DB, error) {
 
 func HandleIndex(todos *TodoList) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, _ *http.Request) {
-		tmpl := template.Must(template.ParseFiles("index.html"))
+		tmpl := template.Must(template.ParseFiles("views/index.html"))
 		err := tmpl.Execute(w, todos)
 		if err != nil {
 			panic(err)
@@ -175,6 +176,21 @@ func HandleToggleTodo(todos *TodoList) func(http.ResponseWriter, *http.Request) 
 	}
 }
 
+func HandleStyles(w http.ResponseWriter, r *http.Request) {
+	file, err := os.Open("./dist/output.css")
+
+	if err != nil {
+		panic(err)
+	}
+
+	defer file.Close()
+
+	w.Header().Add("Content-Type", "text/css")
+
+	br := bufio.NewReader(file)
+	br.WriteTo(w)
+}
+
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -196,6 +212,7 @@ func main() {
 	http.HandleFunc("/", HandleIndex(todos))
 	http.HandleFunc("/todo", HandleCreateTodo(todos))
 	http.HandleFunc("/todo/toggle", HandleToggleTodo(todos))
+	http.HandleFunc("/styles", HandleStyles)
 
 	log.Fatal(http.ListenAndServe(":3000", nil))
 }

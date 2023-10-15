@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Go + HTMX</title>
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+    <script src="https://unpkg.com/hyperscript.org@0.9.11"></script>
+    <!-- <script src="https://cdn.tailwindcss.com"></script> -->
+    <link rel="stylesheet" href="/styles">
+  </head>
+  <body>
+    <div class="flex justify-center items-center h-screen gap-4 flex-col">
+      <ul id="todo-list" class="w-[328px]">
+        {{ range .Todos }} {{ block "todo" . }}
+        <li class="gap-4 flex justify-between">
+          <p>{{ .Content }}</p>
+
+          {{ if .Finished }}
+          <input
+            hx-post="/todo/toggle?id={{ .Id }}"
+            hx-swap="outerHTML"
+            hx-target="closest li"
+            type="checkbox"
+            checked
+          />
+          {{ else }}
+          <input
+            hx-post="/todo/toggle?id={{ .Id }}"
+            hx-swap="outerHTML"
+            hx-target="closest li"
+            type="checkbox"
+          />
+          {{ end }}
+        </li>
+        {{ end }} {{ end }}
+      </ul>
+
+      <form
+        class="gap-4 flex"
+        hx-post="/todo"
+        hx-target="#todo-list"
+        hx-swap="beforeend"
+        _="on submit target.reset()"
+      >
+        <input
+          class="bg-gray-200 px-4 py-2 outline-none rounded-md"
+          type="text"
+          placeholder="What are you planning?"
+          name="content"
+        />
+        <button
+          class="bg-blue-500 text-white px-4 py-2 rounded-md"
+          type="submit"
+        >
+          Add Todo
+        </button>
+      </form>
+    </div>
+  </body>
+</html>
