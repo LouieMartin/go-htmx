@@ -143,7 +143,7 @@ func HandleIndex(todos *TodoList) func(http.ResponseWriter, *http.Request) {
 func HandleCreateTodo(todos *TodoList) func(http.ResponseWriter, *http.Request) {
 	return func(w http.ResponseWriter, r *http.Request) {
 		content := r.PostFormValue("content")
-		tmpl := template.Must(template.ParseFiles("index.html"))
+		tmpl := template.Must(template.ParseFiles("views/index.html"))
 		todo, err := todos.NewTodo(content)
 		if err != nil {
 			panic(err)
@@ -168,7 +168,7 @@ func HandleToggleTodo(todos *TodoList) func(http.ResponseWriter, *http.Request) 
 			panic(err)
 		}
 
-		tmpl := template.Must(template.ParseFiles("index.html"))
+		tmpl := template.Must(template.ParseFiles("views/index.html"))
 		todo.Finished = !todo.Finished
 
 		todos.UpdateTodo(todo)
