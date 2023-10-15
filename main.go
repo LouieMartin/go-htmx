@@ -176,9 +176,8 @@ func HandleToggleTodo(todos *TodoList) func(http.ResponseWriter, *http.Request) 
 	}
 }
 
-func HandleStyles(w http.ResponseWriter, r *http.Request) {
+func HandleStyles(w http.ResponseWriter, _ *http.Request) {
 	file, err := os.Open("./dist/output.css")
-
 	if err != nil {
 		panic(err)
 	}
